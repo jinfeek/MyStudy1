@@ -140,20 +140,35 @@ public class SignUpActivity extends AppCompatActivity {
         nameImageChooseString = pathImageChooseString.substring(pathImageChooseString.lastIndexOf("/"));
         Log.d("14janV1", "nameImage==>" + nameImageChooseString);
 
-        //upload Image
+        //upload Image & String
         try{
 
             //Connected FTP protocal
             StrictMode.ThreadPolicy threadPolicy=new StrictMode.ThreadPolicy
                     .Builder().permitAll().build();
             StrictMode.setThreadPolicy(threadPolicy);
-
+            //Upload Image
             SimpleFTP simpleFTP = new SimpleFTP();
             simpleFTP.connect("ftp.swiftcodingthai.com",21,"14jan@swiftcodingthai.com","Abc12345");
             simpleFTP.bin();
             simpleFTP.cwd("Jew_Image");
             simpleFTP.stor(new File(pathImageChooseString));
             simpleFTP.disconnect();
+
+            //Upload Text
+            UpdateStringToSever updateStringToSever = new UpdateStringToSever(SignUpActivity.this,nameString, userString, passwordString, "http://swiftcodingthai.com/14jan/Jew_Image"+nameImageChooseString);
+            updateStringToSever.execute();
+
+            if (Boolean.parseBoolean(updateStringToSever.get())){
+                //upload Success
+                finish();
+
+            }else {
+                //Unsucces
+                MyAlert myAlert=new MyAlert(SignUpActivity.this);
+                myAlert.errorDialog("Upload False","Please Try agian Upload False");
+
+            }
 
 
 
